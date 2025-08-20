@@ -1,1 +1,170 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Codeではじめる“X運用”実践セミナー</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts (Pixel Font) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Press+Start+2P&display=swap" rel="stylesheet">
+    
+    <style>
+        /* カスタムスタイル */
+        body {
+            font-family: 'DotGothic16', sans-serif;
+            background-color: #0a0a0a;
+            color: #f3f3f3;
+            /* ドット絵風の背景パターン */
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 4px 4px;
+        }
+        .font-press-start {
+            font-family: 'Press Start 2P', cursive;
+        }
+        .text-shadow-orange {
+            text-shadow: 3px 3px 0px #c2410c; /* 濃いオレンジの影 */
+        }
+        .card {
+            border: 4px solid #fb923c; /* オレンジ */
+            background-color: rgba(10, 10, 10, 0.8);
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            position: relative;
+        }
+        .card:hover {
+            transform: translate(-4px, -4px);
+            box-shadow: 8px 8px 0px #fb923c;
+        }
+        .card-title {
+            color: #fdba74; /* 薄いオレンジ */
+        }
+        .card-link::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+        /* テキストが点滅するアニメーション */
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .blinking-text {
+            animation: blink 1.5s infinite;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- メインコンテナ -->
+    <div class="container mx-auto p-4 md:p-8 max-w-5xl">
+
+        <!-- ヘッダーセクション -->
+        <header class="text-center mb-12">
+            <h1 class="font-press-start text-3xl md:text-5xl text-orange-400 text-shadow-orange mb-4">
+                Claude Code
+            </h1>
+            <h2 class="font-press-start text-xl md:text-2xl text-orange-400 text-shadow-orange mb-6">
+                “X運用”実践セミナー
+            </h2>
+            <p class="text-lg md:text-xl text-gray-300">
+                （2025年8月19日開催） 🔸 まとめ図解リンク集
+            </p>
+            <p class="text-sm text-gray-500 mt-4">
+                ※文字起こしデータを元に作成しているため、誤字脱字や情報の誤りなども含まれている可能性があります。予めご了承ください。
+            </p>
+        </header>
+
+        <!-- リンクカードセクション -->
+        <main>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+                <!-- カード 1 -->
+                <div class="card p-6">
+                    <a href="1-seminar-overview.html" class="card-link"></a>
+                    <h3 class="font-press-start text-lg mb-2 card-title">STAGE 1: 冒険の概要</h3>
+                    <p class="text-gray-400">セミナーの全体像と目的を把握し、冒険の準備を整えよう。</p>
+                </div>
+
+                <!-- カード 2 -->
+                <div class="card p-6">
+                    <a href="2-twitter-growth-strategy.html" class="card-link"></a>
+                    <h3 class="font-press-start text-lg mb-2 card-title">STAGE 2: 成長戦略</h3>
+                    <p class="text-gray-400">Xフォロワーを増やすための3つのフェーズ。君はどの段階にいる？</p>
+                </div>
+
+                <!-- カード 3 -->
+                <div class="card p-6">
+                    <a href="3-claude-code-lecture.html" class="card-link"></a>
+                    <h3 class="font-press-start text-lg mb-2 card-title">STAGE 3: 理論の巻物</h3>
+                    <p class="text-gray-400">Claude Code講座の核心に迫る。図解で知識をインプットせよ。</p>
+                </div>
+
+                <!-- カード 4 -->
+                <div class="card p-6">
+                    <a href="4-x-agent-system-overview.html" class="card-link"></a>
+                    <h3 class="font-press-start text-lg mb-2 card-title">STAGE 4: 設計図</h3>
+                    <p class="text-gray-400">マルチエージェントシステムの全体像。最強のチームを編成するのだ。</p>
+                </div>
+
+                <!-- カード 5 -->
+                <div class="card p-6">
+                    <a href="5-agent-flow-detail.html" class="card-link"></a>
+                    <h3 class="font-press-start text-lg mb-2 card-title">STAGE 5: 連携の極意</h3>
+                    <p class="text-gray-400">AIエージェントたちがどう連携するか。その詳細なフローを解き明かす。</p>
+                </div>
+
+                <!-- カード 6 -->
+                <div class="card p-6">
+                    <a href="6-create-claude-agent.html" class="card-link"></a>
+                    <h3 class="font-press-start text-lg mb-2 card-title">STAGE 6: 創造の儀式</h3>
+                    <p class="text-gray-400">専門AIエージェントを召喚する手順。君だけのエージェントを生み出せ。</p>
+                </div>
+
+                <!-- カード 7 -->
+                <div class="card p-6">
+                    <a href="7-live-demo-reproduction.html" class="card-link"></a>
+                    <h3 class="font-press-start text-lg mb-2 card-title">STAGE 7: 実践の闘技場</h3>
+                    <p class="text-gray-400">伝説のライブデモを完全再現。見て学ぶだけでは終わらない。</p>
+                </div>
+
+                <!-- カード 8 -->
+                <div class="card p-6">
+                    <a href="8-data-analysis-guide.html" class="card-link"></a>
+                    <h3 class="font-press-start text-lg mb-2 card-title">STAGE 8: データの解読</h3>
+                    <p class="text-gray-400">「ついすぽ」を使いこなし、隠されたデータから真実を読み解く。</p>
+                </div>
+
+                <!-- カード 9 -->
+                <div class="card p-6">
+                    <a href="9-practical-workshop.html" class="card-link"></a>
+                    <h3 class="font-press-start text-lg mb-2 card-title">STAGE 9: 最終試練</h3>
+                    <p class="text-gray-400">実践ワークショップの総まとめ。ここまでの知識を力に変える時だ。</p>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- フッターセクション -->
+        <footer class="text-center mt-12">
+            <p class="font-press-start text-orange-500 blinking-text">
+                - PRESS START -
+            </p>
+            <p class="text-sm text-gray-600 mt-4">
+                &copy; 2025 Claude Code Seminar. All rights reserved.
+            </p>
+        </footer>
+
+    </div>
+
+</body>
+</html>
 
