@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Code エージェント作成完全ガイド</title>
+  
+  <!-- Mermaid.js の読み込み -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: 'base',
+        securityLevel: 'loose',
+        fontFamily: '"Kaisei Decol", sans-serif',
+        themeVariables: {
+          primaryColor: '#4CAF50',
+          primaryTextColor: '#333',
+          primaryBorderColor: '#F2798F',
+          lineColor: '#34BFBF',
+          secondaryColor: '#F2C641',
+          tertiaryColor: '#F2D1CE'
+        },
+        flowchart: {
+          cornerRadius: 15,
+          curve: 'cardinal',
+          htmlLabels: true
+        }
+      });
+    });
+  </script>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif;
+      line-height: 1.8;
+      background-color: #FAFAFA;
+      color: #333;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: linear-gradient(135deg, #FAFAFA 0%, #f5f5f5 100%);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #4CAF50 0%, #009688 100%);
+      color: #333;
+      padding: 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+      animation: float 20s infinite linear;
+    }
+    
+    @keyframes float {
+      0% { transform: rotate(0deg) translate(0, 0); }
+      100% { transform: rotate(360deg) translate(0, 0); }
+    }
+    
+    .header h1 {
+      font-size: 2.8em;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 2;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .header p {
+      font-size: 1.3em;
+      position: relative;
+      z-index: 2;
+      opacity: 0.9;
+    }
+    
+    .section {
+      padding: 40px;
+      margin: 20px 0;
+      border-radius: 15px;
+      position: relative;
+    }
+    
+    .overview-section {
+      background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+      color: #333;
+      margin: 30px 0;
+      box-shadow: 0 10px 30px rgba(76, 175, 80, 0.3);
+      border-left: 8px solid #2E7D32;
+    }
+    
+    .creation-section {
+      background: linear-gradient(135deg, #9575CD 0%, #BA68C8 100%);
+      color: #333;
+      margin: 30px 0;
+      box-shadow: 0 10px 30px rgba(149, 117, 205, 0.3);
+      border-left: 8px solid #7B1FA2;
+    }
+    
+    .agents-section {
+      background: linear-gradient(135deg, #FFC107 0%, #FFD54F 100%);
+      color: #333;
+      margin: 30px 0;
+      box-shadow: 0 10px 30px rgba(255, 193, 7, 0.3);
+      border-left: 8px solid #F57C00;
+    }
+    
+    .workflow-section {
+      background: linear-gradient(135deg, #E91E63 0%, #EC407A 100%);
+      color: #333;
+      margin: 30px 0;
+      box-shadow: 0 10px 30px rgba(233, 30, 99, 0.3);
+      border-left: 8px solid #C2185B;
+    }
+    
+    .implementation-section {
+      background: linear-gradient(135deg, #009688 0%, #26A69A 100%);
+      color: #333;
+      margin: 30px 0;
+      box-shadow: 0 10px 30px rgba(0, 150, 136, 0.3);
+      border-left: 8px solid #00695C;
+    }
+    
+    .section h2 {
+      font-size: 2.2em;
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .section h3 {
+      font-size: 1.6em;
+      margin: 25px 0 15px 0;
+      color: #2E7D32;
+      position: relative;
+      padding-left: 25px;
+    }
+    
+    .section h3::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 15px;
+      height: 15px;
+      background: #4CAF50;
+      border-radius: 50%;
+      box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3);
+    }
+    
+    .agent-card {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: 15px;
+      margin: 20px 0;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      border-left: 6px solid;
+      position: relative;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .agent-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    }
+    
+    .research-agent {
+      border-left-color: #2196F3;
+      background: linear-gradient(135deg, rgba(33, 150, 243, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%);
+    }
+    
+    .analyzer-agent {
+      border-left-color: #FF9800;
+      background: linear-gradient(135deg, rgba(255, 152, 0, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%);
+    }
+    
+    .prompt-agent {
+      border-left-color: #9C27B0;
+      background: linear-gradient(135deg, rgba(156, 39, 176, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%);
+    }
+    
+    .creator-agent {
+      border-left-color: #4CAF50;
+      background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%);
+    }
+    
+    .step-card {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 25px;
+      border-radius: 12px;
+      margin: 15px 0;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      border-left: 4px solid #4CAF50;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    
+    .step-card:hover {
+      transform: translateX(5px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    }
+    
+    .step-number {
+      position: absolute;
+      left: -15px;
+      top: 20px;
+      background: linear-gradient(135deg, #4CAF50, #009688);
+      color: #333;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+    }
+    
+    .term-explanation {
+      background: rgba(255, 255, 255, 0.8);
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px 0;
+      border-left: 4px solid #FFC107;
+      position: relative;
+    }
+    
+    .term-explanation::before {
+      content: '💡';
+      position: absolute;
+      left: -15px;
+      top: 15px;
+      background: #FFC107;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+    
+    .term-explanation .term {
+      font-weight: bold;
+      color: #F57C00;
+      font-size: 1.1em;
+    }
+    
+    .command-box {
+      background: #263238;
+      color: #E0F2F1;
+      padding: 20px;
+      border-radius: 10px;
+      font-family: 'Courier New', monospace;
+      margin: 15px 0;
+      position: relative;
+      overflow-x: auto;
+      border: 2px solid #37474F;
+    }
+    
+    .command-box::before {
+      content: '⚡ Terminal';
+      position: absolute;
+      top: -12px;
+      left: 15px;
+      background: #009688;
+      color: #333;
+      padding: 5px 15px;
+      border-radius: 15px;
+      font-size: 0.8em;
+      font-weight: bold;
+    }
+    
+    .command-box code {
+      color: #A5D6A7;
+      font-weight: bold;
+    }
+    
+    .highlight-box {
+      background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 235, 59, 0.1));
+      border: 2px solid #FFC107;
+      border-radius: 15px;
+      padding: 25px;
+      margin: 20px 0;
+      position: relative;
+    }
+    
+    .highlight-box::before {
+      content: '⭐';
+      position: absolute;
+      top: -15px;
+      left: 20px;
+      background: #FFC107;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    
+    .mermaid-container {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: 15px;
+      margin: 30px 0;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      overflow-x: auto;
+    }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 25px;
+      margin: 25px 0;
+    }
+    
+    .card {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+      border: 1px solid rgba(76, 175, 80, 0.2);
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    }
+    
+    .icon {
+      display: inline-block;
+      width: 28px;
+      height: 28px;
+      margin-right: 12px;
+      vertical-align: middle;
+    }
+    
+    .icon-robot::before {
+      content: '🤖';
+      font-size: 28px;
+    }
+    
+    .icon-build::before {
+      content: '⚙️';
+      font-size: 28px;
+    }
+    
+    .icon-workflow::before {
+      content: '🔄';
+      font-size: 28px;
+    }
+    
+    .icon-code::before {
+      content: '💻';
+      font-size: 28px;
+    }
+    
+    .directory-tree {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 20px;
+      border-radius: 10px;
+      font-family: 'Courier New', monospace;
+      margin: 20px 0;
+      overflow-x: auto;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    
+    .directory-tree .folder {
+      color: #569cd6;
+    }
+    
+    .directory-tree .file {
+      color: #9cdcfe;
+    }
+    
+    .directory-tree .comment {
+      color: #6a9955;
+    }
+    
+    .conclusion-section {
+      background: linear-gradient(135deg, #37474F 0%, #455A64 100%);
+      color: #E0F2F1;
+      text-align: center;
+      margin-top: 40px;
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 15px 30px;
+      background: linear-gradient(135deg, #4CAF50, #009688);
+      color: #333;
+      text-decoration: none;
+      border-radius: 25px;
+      font-weight: bold;
+      margin: 10px;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+    }
+    
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin: 25px 0;
+    }
+    
+    .info-card {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+      border-top: 4px solid #4CAF50;
+    }
+    
+    .warning-box {
+      background: linear-gradient(135deg, rgba(255, 87, 34, 0.1), rgba(255, 152, 0, 0.1));
+      border: 2px solid #FF5722;
+      border-radius: 15px;
+      padding: 20px;
+      margin: 20px 0;
+      position: relative;
+    }
+    
+    .warning-box::before {
+      content: '⚠️';
+      position: absolute;
+      top: -15px;
+      left: 20px;
+      background: #FF5722;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        margin: 10px;
+        border-radius: 10px;
+      }
+      
+      .section {
+        padding: 20px;
+      }
+      
+      .header h1 {
+        font-size: 2em;
+      }
+      
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>🚀 Claude Code エージェント作成完全ガイド</h1>
+      <p>X投稿マルチエージェントシステム構築から運用まで - ゼロから始める専門AI開発</p>
+    </header>
+
+    <main>
+      <!-- 概要セクション -->
+      <section class="section overview-section">
+        <h2><span class="icon icon-robot"></span>Claude Code サブエージェント機能の全体像</h2>
+        
+        <div class="highlight-box">
+          <h3>🎯 サブエージェント機能とは</h3>
+          <p><strong>結論：</strong>Claude Code内で特定のタスクを処理する「専門AI」を作成し、メインエージェントから委任できる革新的な機能</p>
+          <p><strong>背景：</strong>単一の万能AIではなく、役割別の専門チームを構築することで、より高品質で効率的な開発を実現</p>
+        </div>
+
+        <div class="term-explanation">
+          <span class="term">サブエージェント（Sub Agent）：</span>特定の専門領域に特化したAIアシスタント。独自のコンテキストウィンドウ、カスタムプロンプト、専用ツール権限を持つ
+        </div>
+
+        <div class="info-grid">
+          <div class="info-card">
+            <h4>🧠 独立したコンテキスト</h4>
+            <p>メインセッションとは別のコンテキストで動作し、専門的な処理に集中できる</p>
+          </div>
+          <div class="info-card">
+            <h4>⚙️ カスタムプロンプト</h4>
+            <p>専門分野に特化したシステムプロンプトで一貫した高品質な出力を実現</p>
+          </div>
+          <div class="info-card">
+            <h4>🔧 専用ツール権限</h4>
+            <p>必要最小限のツールアクセスでセキュリティと効率性を両立</p>
+          </div>
+          <div class="info-card">
+            <h4>🤝 自動委任機能</h4>
+            <p>タスクの性質を判断して自動的に適切なエージェントに委任</p>
+          </div>
+        </div>
+
+        <h3>💡 従来方式との比較</h3>
+        <div class="grid">
+          <div class="card">
+            <h4>❌ 従来方式の課題</h4>
+            <ul>
+              <li>コンテキストの汚染：長い会話履歴でパフォーマンス低下</li>
+              <li>専門性の欠如：万能型では特定分野の深い知識が不足</li>
+              <li>トークン消費：継続した作業で大量のトークンを消費</li>
+              <li>品質のバラつき：一貫した出力品質の維持が困難</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h4>✅ サブエージェント方式の利点</h4>
+            <ul>
+              <li>クリーンなコンテキスト：専門タスクに集中した処理</li>
+              <li>高い専門性：分野特化で深い知識と一貫性を実現</li>
+              <li>効率的な処理：必要な時のみ起動でトークン節約</li>
+              <li>再利用性：一度作成すれば継続的に活用可能</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- エージェント作成セクション -->
+      <section class="section creation-section">
+        <h2><span class="icon icon-build"></span>サブエージェント作成の具体的手順</h2>
+        
+        <div class="highlight-box">
+          <h3>🔧 基本的な作成フロー</h3>
+          <p><strong>結論：</strong><code>/agents</code>コマンドから始まる6ステップで専門エージェントを作成</p>
+          <p><strong>背景：</strong>ClaudeのAI支援により、詳細な設定を簡単に構築可能</p>
+        </div>
+
+        <div class="command-box">
+          <h4>🚀 エージェント作成開始コマンド</h4>
+          <code>/agents</code>
+          <p style="margin-top: 10px; color: #A5D6A7;">Claude Code内でこのコマンドを実行してエージェント管理画面を起動</p>
+        </div>
+
+        <div class="grid">
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <h4>📂 保存場所の選択</h4>
+            <p><strong>Project (.claude/agents/)：</strong>特定のプロジェクト専用エージェント</p>
+            <p><strong>Personal (~/.claude/agents/)：</strong>全プロジェクトで利用可能なエージェント</p>
+            
+            <div class="term-explanation">
+              <span class="term">プロジェクトレベル：</span>特定のリポジトリ内でのみ利用可能。競合時は個人レベルより優先される
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <h4>🎨 作成方法の選択</h4>
+            <p><strong>Generate with Claude（推奨）：</strong>AIがプロンプトから自動生成</p>
+            <p><strong>Manual creation：</strong>手動でファイルを作成・編集</p>
+            
+            <div class="warning-box">
+              <p><strong>推奨理由：</strong>Claudeによる生成は高品質なテンプレートと適切な設定を自動で作成</p>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <h4>📝 エージェント定義の入力</h4>
+            <p>専門分野、役割、責任範囲を詳細に記述</p>
+            
+            <div class="command-box">
+              <h4>例：リサーチエージェントの定義</h4>
+              <code>
+X投稿用のリサーチ専門エージェントを作成してください。<br>
+役割：指定されたトピックについて最新情報を調査し、投稿に適した形でまとめる<br>
+専門分野：トレンド分析、競合調査、関連情報収集<br>
+出力形式：構造化されたレポート形式
+              </code>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">4</div>
+            <h4>🔧 ツール権限の設定</h4>
+            <p><strong>All tools（デフォルト）：</strong>メインスレッドのすべてのツールを継承</p>
+            <p><strong>Specific tools：</strong>必要なツールのみを個別指定</p>
+            
+            <div class="term-explanation">
+              <span class="term">最小権限の原則：</span>セキュリティ向上のため、必要最小限のツールアクセスのみを付与することを推奨
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">5</div>
+            <h4>🎨 カラーテーマの選択</h4>
+            <p>エージェントの視覚的識別のための背景色を設定</p>
+            <ul>
+              <li><strong>Automatic color：</strong>システムが自動選択</li>
+              <li><strong>Manual selection：</strong>Red、Blue、Green等から選択</li>
+            </ul>
+            
+            <div class="term-explanation">
+              <span class="term">視覚的識別：</span>複数エージェントが動作する際、どのエージェントが処理中かを色で判別可能
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">6</div>
+            <h4>✅ 確認・保存</h4>
+            <p>生成されたエージェント定義をプレビューで確認後、保存実行</p>
+            
+            <div class="directory-tree">
+<span class="comment"># 生成されるファイル構造</span>
+<span class="folder">.claude/</span>
+└── <span class="folder">agents/</span>
+    └── <span class="file">x-research-agent.md</span>  <span class="comment"># YAML + Markdown形式</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="highlight-box">
+          <h3>📄 生成されるファイルの構造</h3>
+          <div class="command-box">
+            <code>
+---<br>
+name: x-research-agent<br>
+description: X投稿用のトピック調査・情報収集専門エージェント<br>
+tools: all<br>
+---<br>
+<br>
+あなたはX投稿用のリサーチ専門エージェントです。<br>
+指定されたトピックについて最新情報を調査し、<br>
+投稿作成に必要な材料を構造化して提供してください。
+            </code>
+          </div>
+        </div>
+      </section>
+
+      <!-- X投稿マルチエージェントシステムセクション -->
+      <section class="section agents-section">
+        <h2><span class="icon icon-workflow"></span>X投稿マルチエージェントシステム構成</h2>
+        
+        <div class="highlight-box">
+          <h3>🎯 システム全体の目的</h3>
+          <p><strong>結論：</strong>4つの専門エージェントが連携して、ユーザーのトピックから高品質なX投稿文を自動生成</p>
+          <p><strong>背景：</strong>投稿の企画から作成まで全工程を分業化し、各段階で最適化された処理を実現</p>
+        </div>
+
+        <div class="mermaid-container">
+          <div class="mermaid">
+            graph TD
+                A[🎯 ユーザートピック入力] --> B[🔍 リサーチエージェント]
+                C[📊 過去投稿データ] --> D[📈 分析エージェント]
+                B --> E[📋 調査結果]
+                D --> F[📋 投稿パターン]
+                F --> G[⚙️ システムプロンプト<br/>生成エージェント]
+                G --> H[📝 カスタムプロンプト]
+                E --> I[✍️ 投稿作成エージェント]
+                H --> I
+                I --> J[✅ 完成投稿文]
+                
+                style A fill:#FFC107,stroke:#F57C00,stroke-width:3px,color:#333
+                style B fill:#2196F3,stroke:#1565C0,stroke-width:3px,color:#333
+                style C fill:#4CAF50,stroke:#2E7D32,stroke-width:3px,color:#333
+                style D fill:#FF9800,stroke:#F57C00,stroke-width:3px,color:#333
+                style E fill:#9C27B0,stroke:#7B1FA2,stroke-width:3px,color:#333
+                style F fill:#E91E63,stroke:#C2185B,stroke-width:3px,color:#333
+                style G fill:#795548,stroke:#5D4037,stroke-width:3px,color:#333
+                style H fill:#607D8B,stroke:#455A64,stroke-width:3px,color:#333
+                style I fill:#009688,stroke:#00695C,stroke-width:3px,color:#333
+                style J fill:#4CAF50,stroke:#2E7D32,stroke-width:3px,color:#333
+          </div>
+        </div>
+
+        <h3>🤖 4つの専門エージェント詳細解説</h3>
+
+        <div class="agent-card research-agent">
+          <h4>🔍 1. リサーチエージェント (x-research-agent)</h4>
+          
+          <div class="term-explanation">
+            <span class="term">リサーチエージェント：</span>情報収集専門のAI。最新トレンドや関連情報を調査し、投稿作成の材料を提供
+          </div>
+          
+          <p><strong>主要機能：</strong></p>
+          <ul>
+            <li><strong>トレンド分析：</strong>指定トピックの最新動向と関連キーワードの調査</li>
+            <li><strong>競合調査：</strong>同ジャンルの成功投稿パターンの分析</li>
+            <li><strong>情報フィルタリング：</strong>投稿に適した信頼性の高い情報の選別</li>
+            <li><strong>構造化出力：</strong>調査結果を投稿作成に活用しやすい形式で整理</li>
+          </ul>
+          
+          <div class="command-box">
+            <h4>呼び出し例</h4>
+            <code>
+Task(subagent_type="x-research-agent", <br>
+     prompt="AI エージェントの最新トレンドを調査してください")
+            </code>
+          </div>
+          
+          <p><strong>出力例：</strong>調査結果レポート、関連情報、トレンドデータ</p>
+        </div>
+
+        <div class="agent-card analyzer-agent">
+          <h4>📈 2. 過去投稿分析エージェント (x-post-analyzer)</h4>
+          
+          <div class="term-explanation">
+            <span class="term">分析エージェント：</span>過去の投稿データを解析し、成功パターンや文章の特徴を抽出する専門AI
+          </div>
+          
+          <p><strong>分析項目：</strong></p>
+          <ul>
+            <li><strong>文章構造分析：</strong>フック→概要→深掘り→CTAの構造パターン</li>
+            <li><strong>語彙選択パターン：</strong>使用頻度の高い単語や表現の特定</li>
+            <li><strong>文末表現の傾向：</strong>文体や口調の一貫性分析</li>
+            <li><strong>バイラル要素：</strong>拡散されやすい投稿の共通要素特定</li>
+          </ul>
+          
+          <div class="term-explanation">
+            <span class="term">バイラル要素：</span>多くの人にシェアされやすい投稿の特徴。感情に訴える表現、意外性、実用性などが含まれる
+          </div>
+          
+          <div class="command-box">
+            <h4>呼び出し例</h4>
+            <code>
+Task(subagent_type="x-post-analyzer", <br>
+     prompt="data/past_posts/ の投稿を分析してパターンを抽出")
+            </code>
+          </div>
+          
+          <p><strong>出力例：</strong>投稿スタイル分析、文章特徴、構造パターン</p>
+        </div>
+
+        <div class="agent-card prompt-agent">
+          <h4>⚙️ 3. システムプロンプト生成エージェント (x-system-prompt-generator)</h4>
+          
+          <div class="term-explanation">
+            <span class="term">システムプロンプト生成エージェント：</span>分析結果から投稿作成用の詳細な指示書（プロンプト）を自動生成するAI
+          </div>
+          
+          <p><strong>生成機能：</strong></p>
+          <ul>
+            <li><strong>ジャンル別管理：</strong>技術、ビジネス、ライフスタイルなど分野別プロンプト</li>
+            <li><strong>動的生成：</strong>分析結果に基づいてリアルタイムでカスタマイズ</li>
+            <li><strong>スタイル統合：</strong>個人の文章癖や表現パターンを反映</li>
+            <li><strong>効果測定連携：</strong>投稿結果のフィードバックを次回生成に活用</li>
+          </ul>
+          
+          <div class="command-box">
+            <h4>呼び出し例</h4>
+            <code>
+Task(subagent_type="x-system-prompt-generator", <br>
+     prompt="分析結果からテクノロジージャンルの<br>
+     システムプロンプトを生成")
+            </code>
+          </div>
+          
+          <p><strong>出力例：</strong>カスタマイズされたシステムプロンプト、ジャンル別テンプレート</p>
+        </div>
+
+        <div class="agent-card creator-agent">
+          <h4>✍️ 4. 投稿作成エージェント (x-post-creator)</h4>
+          
+          <div class="term-explanation">
+            <span class="term">投稿作成エージェント：</span>リサーチ結果とシステムプロンプトを統合して、実際のX投稿文を生成する最終工程のAI
+          </div>
+          
+          <p><strong>作成機能：</strong></p>
+          <ul>
+            <li><strong>投稿文生成：</strong>調査結果とプロンプトから最適化された投稿文を作成</li>
+            <li><strong>バリエーション作成：</strong>同一トピックで複数の投稿案を提供</li>
+            <li><strong>ハッシュタグ提案：</strong>トレンドに基づいた最適なハッシュタグを選定</li>
+            <li><strong>文字数調整：</strong>X（Twitter）の文字制限に合わせた最適化</li>
+          </ul>
+          
+          <div class="command-box">
+            <h4>呼び出し例</h4>
+            <code>
+Task(subagent_type="x-post-creator", <br>
+     prompt="リサーチ結果とシステムプロンプトから<br>
+     投稿文を作成してください")
+            </code>
+          </div>
+          
+          <p><strong>出力例：</strong>完成投稿文、代替案、投稿メタデータ</p>
+        </div>
+      </section>
+
+      <!-- ワークフローセクション -->
+      <section class="section workflow-section">
+        <h2><span class="icon icon-workflow"></span>2つのワークフロー詳細解説</h2>
+        
+        <div class="highlight-box">
+          <h3>🔄 ワークフローの全体構造</h3>
+          <p><strong>結論：</strong>「分析・プロンプト生成フロー」と「投稿作成フロー」の2段階で高品質投稿を実現</p>
+          <p><strong>背景：</strong>準備段階と実行段階を分離することで、継続的な品質向上と効率的な投稿作成を両立</p>
+        </div>
+
+        <h3>📊 フロー1：文章分析・システムプロンプト生成フロー</h3>
+        
+        <div class="mermaid-container">
+          <div class="mermaid">
+            flowchart TD
+                A1[📁 過去投稿データ<br/>data/past_posts/] --> B1[📈 過去投稿分析エージェント<br/>x-post-analyzer]
+                B1 --> C1[🔍 文章特徴抽出<br/>構造・語彙・文体分析]
+                C1 --> D1[📋 スタイルパターン分析<br/>成功要因の特定]
+                D1 --> E1[⚙️ システムプロンプト生成エージェント<br/>x-system-prompt-generator]
+                E1 --> F1[📝 ジャンル別プロンプト作成<br/>カスタマイズされた指示書]
+                F1 --> G1[💾 システムプロンプト保存<br/>data/system_prompts/]
+                
+                style A1 fill:#4CAF50,stroke:#2E7D32,stroke-width:3px,color:#333
+                style B1 fill:#FF9800,stroke:#F57C00,stroke-width:3px,color:#333
+                style C1 fill:#2196F3,stroke:#1565C0,stroke-width:3px,color:#333
+                style D1 fill:#9C27B0,stroke:#7B1FA2,stroke-width:3px,color:#333
+                style E1 fill:#795548,stroke:#5D4037,stroke-width:3px,color:#333
+                style F1 fill:#607D8B,stroke:#455A64,stroke-width:3px,color:#333
+                style G1 fill:#009688,stroke:#00695C,stroke-width:3px,color:#333
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <h4>📋 フロー1の詳細ステップ</h4>
+            <ol style="list-style: decimal; margin-left: 20px;">
+              <li><strong>過去投稿読み込み：</strong>data/past_posts/から保存済み投稿データを取得</li>
+              <li><strong>文章分析実行：</strong>文体、構造、語彙パターンの統計的解析</li>
+              <li><strong>特徴パターン化：</strong>成功要因を再利用可能な形式に変換</li>
+              <li><strong>プロンプト生成：</strong>ジャンル別システムプロンプトの自動作成</li>
+              <li><strong>保存・管理：</strong>生成されたプロンプトの永続化とバージョン管理</li>
+            </ol>
+          </div>
+          
+          <div class="card">
+            <h4>🎯 フロー1の期待効果</h4>
+            <ul>
+              <li><strong>一貫性の確保：</strong>個人のライティングスタイルを維持</li>
+              <li><strong>品質の向上：</strong>成功パターンの体系化と再現</li>
+              <li><strong>効率化：</strong>毎回ゼロから考える必要を排除</li>
+              <li><strong>学習能力：</strong>新しい投稿結果から継続的に改善</li>
+            </ul>
+          </div>
+        </div>
+
+        <h3>🚀 フロー2：投稿作成フロー</h3>
+        
+        <div class="mermaid-container">
+          <div class="mermaid">
+            flowchart TD
+                A2[💭 ユーザートピック入力<br/>作成したい投稿のテーマ] --> B2[🔍 リサーチエージェント<br/>x-research-agent]
+                B2 --> C2[📊 情報収集・調査<br/>トレンド・関連データ収集]
+                C2 --> D2[🎯 プロンプト選択判定<br/>トピックに最適なプロンプト特定]
+                D2 --> E2[📝 最適プロンプト選択<br/>data/system_prompts/から選択]
+                E2 --> F2[✍️ 投稿作成エージェント<br/>x-post-creator]
+                F2 --> G2[📱 投稿文生成<br/>リサーチ×プロンプト統合]
+                G2 --> H2[✅ 完成投稿文出力<br/>メイン+代替案提供]
+                
+                style A2 fill:#FFC107,stroke:#F57C00,stroke-width:3px,color:#333
+                style B2 fill:#2196F3,stroke:#1565C0,stroke-width:3px,color:#333
+                style C2 fill:#9C27B0,stroke:#7B1FA2,stroke-width:3px,color:#333
+                style D2 fill:#FF5722,stroke:#D84315,stroke-width:3px,color:#333
+                style E2 fill:#607D8B,stroke:#455A64,stroke-width:3px,color:#333
+                style F2 fill:#009688,stroke:#00695C,stroke-width:3px,color:#333
+                style G2 fill:#795548,stroke:#5D4037,stroke-width:3px,color:#333
+                style H2 fill:#4CAF50,stroke:#2E7D32,stroke-width:3px,color:#333
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <h4>📋 フロー2の詳細ステップ</h4>
+            <ol style="list-style: decimal; margin-left: 20px;">
+              <li><strong>トピック受付：</strong>ユーザーからの投稿テーマと要件の入力</li>
+              <li><strong>リサーチ実行：</strong>最新トレンドと関連情報の包括的調査</li>
+              <li><strong>コンテキスト分析：</strong>トピックの特性と最適なアプローチの判定</li>
+              <li><strong>プロンプト選択：</strong>保存済みプロンプトから最適なものを自動選択</li>
+              <li><strong>投稿生成：</strong>リサーチ結果とプロンプトを統合した作成処理</li>
+              <li><strong>結果出力：</strong>完成投稿文と代替案の提示</li>
+            </ol>
+          </div>
+          
+          <div class="card">
+            <h4>🎯 フロー2の期待効果</h4>
+            <ul>
+              <li><strong>時間短縮：</strong>調査から作成まで自動化で大幅な効率向上</li>
+              <li><strong>品質保証：</strong>データに基づいた一貫した高品質出力</li>
+              <li><strong>最新性：</strong>リアルタイムの情報を反映した投稿作成</li>
+              <li><strong>バリエーション：</strong>複数の視点から多様な投稿案を提供</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="warning-box">
+          <h4>⚠️ 注意すべき制約事項</h4>
+          <ul>
+            <li><strong>ログイン必要サイト：</strong>認証が必要なSNSやサービスの情報は直接取得不可</li>
+            <li><strong>リアルタイム制限：</strong>Playwright MCPなどの追加ツールが必要な場合がある</li>
+            <li><strong>セッション管理：</strong>ログイン情報の保存機能は別途実装が必要</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 実装セクション -->
+      <section class="section implementation-section">
+        <h2><span class="icon icon-code"></span>実装・運用ガイド</h2>
+        
+        <div class="highlight-box">
+          <h3>🗂️ ディレクトリ構造の詳細</h3>
+          <p><strong>結論：</strong>データ分離と再利用性を重視した階層的ファイル管理システム</p>
+          <p><strong>背景：</strong>各エージェントが独立して動作しつつ、必要なデータを効率的に共有</p>
+        </div>
+
+        <div class="directory-tree">
+<span class="folder">x-agent/</span>
+├── <span class="folder">.claude/</span>                    <span class="comment"># Claude Code エージェント設定</span>
+│   └── <span class="folder">agents/</span>                <span class="comment"># エージェント定義ファイル</span>
+│       ├── <span class="file">x-research-agent.md</span>      <span class="comment"># リサーチ専門エージェント</span>
+│       ├── <span class="file">x-post-analyzer.md</span>      <span class="comment"># 投稿分析エージェント</span>
+│       ├── <span class="file">x-system-prompt-generator.md</span> <span class="comment"># プロンプト生成エージェント</span>
+│       └── <span class="file">x-post-creator.md</span>       <span class="comment"># 投稿作成エージェント</span>
+├── <span class="folder">data/</span>
+│   ├── <span class="folder">past_posts/</span>            <span class="comment"># 過去投稿（1ファイル1投稿）</span>
+│   ├── <span class="folder">system_prompts/</span>        <span class="comment"># ジャンル別システムプロンプト</span>
+│   ├── <span class="folder">research/</span>              <span class="comment"># リサーチ結果保存</span>
+│   └── <span class="folder">analysis/</span>              <span class="comment"># 分析結果保存</span>
+│       ├── <span class="folder">patterns/</span>          <span class="comment"># 抽出されたパターン</span>
+│       ├── <span class="folder">styles/</span>            <span class="comment"># スタイル分析結果</span>
+│       └── <span class="folder">metrics/</span>           <span class="comment"># パフォーマンス指標</span>
+        </div>
+
+        <h3>🚀 エージェント使用方法の実践例</h3>
+
+        <div class="grid">
+          <div class="card">
+            <h4>🔧 初期セットアップ手順</h4>
+            <div class="command-box">
+              <code>
+# 1. 過去投稿の分析<br>
+Task(subagent_type="x-post-analyzer", <br>
+     prompt="data/past_posts/ の投稿を分析")<br>
+<br>
+# 2. システムプロンプト生成<br>
+Task(subagent_type="x-system-prompt-generator", <br>
+     prompt="分析結果からテクノロジージャンルの<br>
+     プロンプトを生成")<br>
+              </code>
+            </div>
+          </div>
+
+          <div class="card">
+            <h4>📝 日常の投稿作成フロー</h4>
+            <div class="command-box">
+              <code>
+# 1. トピック調査<br>
+Task(subagent_type="x-research-agent", <br>
+     prompt="生成AI の最新動向を調査")<br>
+<br>
+# 2. 投稿作成<br>
+Task(subagent_type="x-post-creator", <br>
+     prompt="リサーチ結果とシステムプロンプト<br>
+     から投稿を作成")
+              </code>
+            </div>
+          </div>
+        </div>
+
+        <h3>📈 継続的改善のサイクル</h3>
+        
+        <div class="mermaid-container">
+          <div class="mermaid">
+            graph LR
+                A[📊 投稿実績の蓄積] --> B[🔍 パフォーマンス分析]
+                B --> C[⚙️ プロンプト調整]
+                C --> D[📝 新しい投稿作成]
+                D --> A
+                
+                style A fill:#4CAF50,stroke:#2E7D32,stroke-width:3px,color:#333
+                style B fill:#FF9800,stroke:#F57C00,stroke-width:3px,color:#333
+                style C fill:#9C27B0,stroke:#7B1FA2,stroke-width:3px,color:#333
+                style D fill:#2196F3,stroke:#1565C0,stroke-width:3px,color:#333
+          </div>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-card">
+            <h4>📊 データ管理のベストプラクティス</h4>
+            <ul>
+              <li><strong>定期バックアップ：</strong>分析結果とプロンプトの版管理</li>
+              <li><strong>性能評価：</strong>投稿のエンゲージメント指標の追跡</li>
+              <li><strong>プロンプト更新：</strong>成功パターンの定期的な再分析</li>
+            </ul>
+          </div>
+          
+          <div class="info-card">
+            <h4>🔧 トラブルシューティング</h4>
+            <ul>
+              <li><strong>エージェント競合：</strong>プロジェクトレベルが個人レベルより優先</li>
+              <li><strong>権限エラー：</strong>ツール設定の見直しと最小権限の確認</li>
+              <li><strong>品質低下：</strong>過去投稿データの追加と再分析</li>
+            </ul>
+          </div>
+          
+          <div class="info-card">
+            <h4>⚡ パフォーマンス最適化</h4>
+            <ul>
+              <li><strong>コンテキスト管理：</strong>不要な情報の削除と整理</li>
+              <li><strong>並列処理：</strong>複数エージェントの効率的な連携</li>
+              <li><strong>キャッシュ活用：</strong>頻繁な調査結果の再利用</li>
+            </ul>
+          </div>
+          
+          <div class="info-card">
+            <h4>🎯 自動委任の活用テクニック</h4>
+            <ul>
+              <li><strong>Description最適化：</strong>"MUST BE USED"キーワードの活用</li>
+              <li><strong>明示的呼び出し：</strong>"use the [agent-name]"での確実な指定</li>
+              <li><strong>コンテキスト設計：</strong>自動判定されやすいタスク記述</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="highlight-box">
+          <h3>🎯 期待される成果と効果</h3>
+          <div class="grid">
+            <div class="card">
+              <h4>📈 品質向上効果</h4>
+              <ul>
+                <li>分析に基づく最適化された投稿文の生成</li>
+                <li>一貫したブランディングとスタイルの維持</li>
+                <li>エンゲージメント率の向上</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h4>⚡ 効率化効果</h4>
+              <ul>
+                <li>手動作成から自動生成への移行</li>
+                <li>投稿作成時間の50%以上短縮</li>
+                <li>継続的な改善による生産性向上</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- まとめセクション -->
+      <section class="section conclusion-section">
+        <h2>🎯 まとめ：Claude Code エージェントで実現する未来の投稿作成</h2>
+        
+        <div class="highlight-box" style="background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(0, 150, 136, 0.1)); border-color: #4CAF50;">
+          <h3>🚀 革新的な投稿作成体験</h3>
+          <p><strong>結論：</strong>Claude Code サブエージェント機能により、専門AIチームによる高品質で効率的な投稿作成が実現</p>
+          <p><strong>最終成果：</strong>データ駆動型アプローチで一貫した品質を保ちながら、創作時間を大幅に短縮</p>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <h3>📊 定量的効果</h3>
+            <ul>
+              <li><strong>作成時間：</strong>50%以上の短縮</li>
+              <li><strong>品質向上：</strong>エンゲージメント率改善</li>
+              <li><strong>一貫性：</strong>ブランド統一度向上</li>
+              <li><strong>継続性：</strong>長期的な改善サイクル</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>🎯 戦略的価値</h3>
+            <ul>
+              <li><strong>競争優位：</strong>AI活用による差別化</li>
+              <li><strong>スケーラビリティ：</strong>システム化による拡張性</li>
+              <li><strong>学習能力：</strong>データ蓄積による継続進化</li>
+              <li><strong>再現性：</strong>成功パターンの体系化</li>
+            </ul>
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px;">
+          <a href="https://docs.anthropic.com/ja/docs/claude-code/sub-agents" class="btn" target="_blank">
+            📚 Claude Code 公式ドキュメント
+          </a>
+          <a href="https://github.com/maplefukku/x-post-agent.git" class="btn" target="_blank">
+            🚀 サンプルリポジトリ
+          </a>
+        </div>
+
+        <div style="margin-top: 30px; font-size: 0.9em; opacity: 0.8; text-align: center;">
+          <p>🤖 このガイドを活用して、あなたも今日からAIチームを編成し、投稿作成プロセスを革新しましょう！</p>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

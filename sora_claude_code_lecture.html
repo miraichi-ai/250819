@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>そらさんのClaude Code講座 完全図解ガイド</title>
+    
+    <!-- Mermaid.js の読み込み -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            mermaid.initialize({
+                startOnLoad: true,
+                theme: 'base',
+                securityLevel: 'loose',
+                fontFamily: '"Kaisei Decol", sans-serif',
+                themeVariables: {
+                    primaryColor: '#4CAF50',
+                    primaryTextColor: '#000',
+                    primaryBorderColor: '#9575CD',
+                    lineColor: '#009688',
+                    secondaryColor: '#FFC107',
+                    tertiaryColor: '#E91E63'
+                },
+                flowchart: {
+                    cornerRadius: 15,
+                    curve: 'cardinal',
+                    htmlLabels: true
+                }
+            });
+        });
+    </script>
+    
+    <style>
+        :root {
+            --main-color: #4CAF50;
+            --accent-1: #9575CD;
+            --accent-2: #FFC107;
+            --accent-3: #009688;
+            --accent-4: #E91E63;
+            --bg-color: #FAFAFA;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', 'Helvetica', sans-serif;
+            background-color: var(--bg-color);
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--main-color), var(--accent-3));
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .lecturer-info {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border-left: 5px solid var(--accent-1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .section {
+            background: white;
+            margin: 30px 0;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            border-left: 5px solid var(--main-color);
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            color: var(--main-color);
+        }
+        
+        .icon {
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .icon-overview { background: var(--main-color); }
+        .icon-phases { background: var(--accent-1); }
+        .icon-agents { background: var(--accent-2); }
+        .icon-handson { background: var(--accent-3); }
+        .icon-tools { background: var(--accent-4); }
+        
+        .explanation-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid var(--accent-2);
+        }
+        
+        .term-explanation {
+            background: #e8f5e8;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 0.95em;
+        }
+        
+        .workflow-container {
+            background: #f0f8ff;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 2px dashed var(--accent-3);
+        }
+        
+        .phase-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .phase-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border-top: 4px solid var(--accent-1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .phase-number {
+            background: var(--accent-1);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .agent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .agent-card {
+            background: white;
+            border: 2px solid var(--main-color);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .agent-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .agent-number {
+            background: var(--main-color);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+        
+        .step-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .step-item {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-3);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .step-item::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 20px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--accent-3);
+        }
+        
+        .highlight {
+            background: var(--accent-2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        .code-snippet {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        
+        .warning-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .success-box {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .info-box {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .tool-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid var(--accent-4);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .tips-list {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        
+        .tips-list ul {
+            margin-left: 20px;
+        }
+        
+        .tips-list li {
+            margin-bottom: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .phase-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .agent-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- ヘッダー部分 -->
+        <div class="header">
+            <h1>🚀 そらさんのClaude Code講座</h1>
+            <p>Sub Agentを使ったX投稿作成システム構築 完全ガイド</p>
+        </div>
+
+        <!-- 講師紹介 -->
+        <div class="lecturer-info">
+            <h2>🎤 講師紹介：そらさん</h2>
+            <div class="explanation-box">
+                <h3>📋 そらさんのプロフィール</h3>
+                <ul>
+                    <li><strong>活動：</strong>学生AIコミュニティ代表</li>
+                    <li><strong>専門：</strong>AI・Claude Code・X（Twitter）運用</li>
+                    <li><strong>実績：</strong>令和の虎出演、国会議員会館での講演</li>
+                    <li><strong>フォーカス：</strong>学生向けAI教育・実践的AI活用</li>
+                </ul>
+            </div>
+            
+            <div class="term-explanation">
+                <strong>学生AIコミュニティ</strong> = そらさんが代表を務める、学生向けのAI学習・実践コミュニティ。実際にAIツールを使った開発や運用を学ぶ場として活動。
+            </div>
+        </div>
+
+        <!-- 講座概要 -->
+        <div class="section">
+            <div class="section-title">
+                <div class="icon icon-overview">🎯</div>
+                講座概要
+            </div>
+            
+            <div class="explanation-box">
+                <h3>📋 本講座で学べること</h3>
+                <p><span class="highlight">Claude Code Sub Agent</span>を使って、X（Twitter）投稿を自動生成するシステムを構築する方法を実践的に学習します。</p>
+            </div>
+            
+            <div class="term-explanation">
+                <strong>Claude Code Sub Agent</strong> = Claude Codeの中で動作する専門的なAIエージェント。特定の作業に特化したAIを作成し、複数のエージェントを連携させて複雑なタスクを実行できる機能。
+            </div>
+            
+            <div class="explanation-box">
+                <h3>🎯 講座の3つの柱</h3>
+                <ol>
+                    <li><strong>Claude Code学習：</strong>Sub Agentの作成と管理方法</li>
+                    <li><strong>X運用戦略：</strong>フォロワー成長のフェーズ別戦略</li>
+                    <li><strong>実践ハンズオン：</strong>実際にシステムを構築する体験</li>
+                </ol>
+            </div>
+            
+            <div class="workflow-container">
+                <h4>🔄 講座全体の流れ</h4>
+                
+                <div class="mermaid">
+                    graph TD
+                        A[📚 X運用理論<br/>フェーズ別戦略の解説] --> B[🛠️ Claude Code環境構築<br/>GitHub・開発環境の準備]
+                        B --> C[🤖 Sub Agent作成<br/>4つの専門エージェントを構築]
+                        C --> D[📊 ついすぽ活用<br/>過去投稿データの収集・分析]
+                        D --> E[🔍 投稿分析実行<br/>成功パターンの抽出]
+                        E --> F[⚙️ システムプロンプト生成<br/>自動投稿のためのルール作成]
+                        F --> G[✍️ 投稿作成実演<br/>実際にAIが投稿を自動生成]
+                        
+                        style A fill:#e1f5fe
+                        style G fill:#e8f5e8
+                </div>
+            </div>
+        </div>
+
+        <!-- X運用フェーズ -->
+        <div class="section">
+            <div class="section-title">
+                <div class="icon icon-phases">📈</div>
+                X運用の3つのフェーズ
+            </div>
+            
+            <div class="explanation-box">
+                <h3>📋 そらさんが実践したフォロワー成長戦略</h3>
+                <p>X運用を<span class="highlight">3つのフェーズ</span>に分けて、それぞれ異なる戦略でフォロワーを増やしていく方法論です。</p>
+            </div>
+            
+            <div class="phase-grid">
+                <div class="phase-card">
+                    <div class="phase-number">1</div>
+                    <h4>🌱 Phase 1: 0人→1000人</h4>
+                    <p><strong>戦略：</strong>自分がどんな人なのかをアピールしまくるフェーズ</p>
+                    <div class="tips-list">
+                        <h5>📝 具体的な行動</h5>
+                        <ul>
+                            <li>自分の専門分野（DeFi、AI等）を明確に発信</li>
+                            <li>いろんな人と積極的に交流</li>
+                            <li>近しいジャンルの人との引用リツイート</li>
+                            <li>リプライで価値ある情報を提供</li>
+                        </ul>
+                    </div>
+                    <div class="term-explanation">
+                        <strong>DeFi</strong> = Decentralized Finance（分散型金融）。ブロックチェーン技術を使った新しい金融システム。
+                    </div>
+                </div>
+                
+                <div class="phase-card">
+                    <div class="phase-number">2</div>
+                    <h4>🎯 Phase 2: 1000人→3000人</h4>
+                    <p><strong>戦略：</strong>自分のジャンル・ブランディングを確立するフェーズ</p>
+                    <div class="tips-list">
+                        <h5>📝 具体的な行動</h5>
+                        <ul>
+                            <li>専門分野の深い知識を継続発信</li>
+                            <li>独自のワークフローや手法を公開</li>
+                            <li>活用術やTipsを定期的に投稿</li>
+                            <li>フォロワーとの関係性を深める</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="phase-card">
+                    <div class="phase-number">3</div>
+                    <h4>🚀 Phase 3: 3000人→10000人</h4>
+                    <p><strong>戦略：</strong>最新トレンドとAIを活用した効率的運用フェーズ</p>
+                    <div class="tips-list">
+                        <h5>📝 具体的な行動</h5>
+                        <ul>
+                            <li>Claude Code、v0等の最新AIツール活用</li>
+                            <li>トレンドを素早くキャッチして発信</li>
+                            <li>AIの力を借りながら質の高い投稿を量産</li>
+                            <li>データ分析に基づく最適化</li>
+                        </ul>
+                    </div>
+                    <div class="term-explanation">
+                        <strong>v0</strong> = Vercelが開発したAIコード生成ツール。UI/UXを自動生成できる。
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <strong>💡 そらさんの実体験：</strong>この3フェーズ戦略で実際にフォロワーを大幅に増やし、令和の虎出演や国会での講演機会を獲得されました。
+            </div>
+        </div>
+
+        <!-- Sub Agent構成 -->
+        <div class="section">
+            <div class="section-title">
+                <div class="icon icon-agents">🤖</div>
+                4つのSub Agent構成
+            </div>
+            
+            <div class="explanation-box">
+                <h3>📋 今回構築する4つの専門エージェント</h3>
+                <p>それぞれが異なる専門分野を担当し、連携してX投稿を自動生成するシステムを構築します。</p>
+            </div>
+            
+            <div class="agent-grid">
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <div class="agent-number">1</div>
+                        <h4>🔍 リサーチエージェント</h4>
+                    </div>
+                    <p><strong>役割：</strong>X投稿用の調査・分析・材料収集を担当するAI</p>
+                    <div class="tips-list">
+                        <h5>📝 主な機能</h5>
+                        <ul>
+                            <li>ユーザー指定テーマの深掘り調査</li>
+                            <li>類似アカウントの投稿傾向分析</li>
+                            <li>トレンドキーワードの抽出</li>
+                            <li>情報収集結果のレポート作成</li>
+                        </ul>
+                    </div>
+                    <div class="warning-box">
+                        <strong>⚠️ 制限事項：</strong>ブラウザログインが必要な情報は直接取得できません。Playwright MCPなどの追加ツールが必要です。
+                    </div>
+                </div>
+                
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <div class="agent-number">2</div>
+                        <h4>📊 過去投稿分析エージェント</h4>
+                    </div>
+                    <p><strong>役割：</strong>伸びている投稿のパターンを分析し、成功要因を抽出</p>
+                    <div class="tips-list">
+                        <h5>📝 分析項目</h5>
+                        <ul>
+                            <li>フックパターン（読者の注意を引く書き出し）</li>
+                            <li>ボディパターン（本文の構成方法）</li>
+                            <li>エンゲージメントブースター要素</li>
+                            <li>文章の癖・特徴の抽出</li>
+                        </ul>
+                    </div>
+                    <div class="term-explanation">
+                        <strong>エンゲージメントブースター</strong> = いいね・リツイート・コメントなどの反応を促進する投稿要素。
+                    </div>
+                </div>
+                
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <div class="agent-number">3</div>
+                        <h4>⚙️ システムプロンプト生成エージェント</h4>
+                    </div>
+                    <p><strong>役割：</strong>分析結果からジャンル別の投稿生成ルールを作成</p>
+                    <div class="tips-list">
+                        <h5>📝 生成内容</h5>
+                        <ul>
+                            <li>技術AI系投稿用プロンプト</li>
+                            <li>ニュース・情報発信系プロンプト</li>
+                            <li>エンゲージメント重視プロンプト</li>
+                            <li>個人ブランディング系プロンプト</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <div class="agent-number">4</div>
+                        <h4>✍️ 投稿作成エージェント</h4>
+                    </div>
+                    <p><strong>役割：</strong>最終的な投稿文を生成し、複数パターンを提案</p>
+                    <div class="tips-list">
+                        <h5>📝 出力内容</h5>
+                        <ul>
+                            <li>メイン投稿文（完成版）</li>
+                            <li>代替パターン（2-3種類）</li>
+                            <li>適切なハッシュタグ提案</li>
+                            <li>投稿タイミング推奨</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="workflow-container">
+                <h4>🔄 エージェント連携フロー</h4>
+                
+                <div class="mermaid">
+                    graph TD
+                        A[📝 投稿トピック入力<br/>音声入力・テキスト入力] --> B[🔍 リサーチエージェント<br/>周辺領域の情報調査]
+                        B --> C[📊 過去投稿分析エージェント<br/>成功パターンの抽出]
+                        C --> D[⚙️ システムプロンプト生成<br/>最適な生成ルール作成]
+                        D --> E[✍️ 投稿作成エージェント<br/>最終投稿文の生成]
+                        E --> F[📱 完成投稿<br/>すぐに投稿可能な状態]
+                        
+                        style A fill:#fff3e0
+                        style F fill:#e8f5e8
+                </div>
+            </div>
+        </div>
+
+        <!-- ハンズオン実践 -->
+        <div class="section">
+            <div class="section-title">
+                <div class="icon icon-handson">💻</div>
+                ハンズオン実践：環境構築から投稿生成まで
+            </div>
+            
+            <div class="explanation-box">
+                <h3>📋 実際に手を動かして学ぶ部分</h3>
+                <p>講座参加者と一緒に、実際にClaude Code環境を構築し、Sub Agentを作成して投稿生成まで体験します。</p>
+            </div>
+            
+            <div class="step-timeline">
+                <div class="step-item">
+                    <h4>🛠️ Step 1: 開発環境の準備</h4>
+                    <div class="explanation-box">
+                        <h5>📋 必要なツール・アカウント</h5>
+                        <ul>
+                            <li><strong>GitHubアカウント：</strong>コード管理とCodespaces利用</li>
+                            <li><strong>Claude API：</strong>エージェント実行のため</li>
+                            <li><strong>Node.js環境：</strong>開発実行環境</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="code-snippet">
+# リポジトリ作成とクローン
+git clone [リポジトリURL]
+cd x-post-agent
+
+# Node.js環境確認・更新
+npm install
+npm update
+
+# Claude Code インストール
+npm install -g claude-code
+                    </div>
+                    
+                    <div class="term-explanation">
+                        <strong>GitHub Codespaces</strong> = ブラウザ上で動作する開発環境。ローカルにNode.js環境がない場合でも、オンラインで開発作業ができる。
+                    </div>
+                </div>
+                
+                <div class="step-item">
+                    <h4>🔐 Step 2: Claude Code認証設定</h4>
+                    <div class="explanation-box">
+                        <h5>📋 認証プロセス</h5>
+                        <ol>
+                            <li>Claude Code起動時に認証画面が表示</li>
+                            <li>「承認する」ボタンをクリック</li>
+                            <li>表示されたコードをコピー</li>
+                            <li>ターミナルに貼り付けて認証完了</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="info-box">
+                        <strong>💡 認証方法：</strong>APIキーまたはサブスクリプション認証の2通りが選択可能です。
+                    </div>
+                </div>
+                
+                <div class="step-item">
+                    <h4>📝 Step 3: claude.md作成</h4>
+                    <div class="explanation-box">
+                        <h5>📋 プロジェクト定義ファイル</h5>
+                        <p>Claude Codeが理解できるマークダウン形式で、プロジェクト全体の概要と目的を定義します。</p>
+                    </div>
+                    
+                    <div class="code-snippet">
+# claude.md の基本構造
+
+# X投稿マルチエージェントシステム
+
+## プロジェクト概要
+4つの専門エージェントが連携して、高品質なX投稿文を自動生成するシステム
+
+## エージェント構成
+1. リサーチエージェント
+2. 過去投稿分析エージェント  
+3. システムプロンプト生成エージェント
+4. 投稿作成エージェント
+                    </div>
+                </div>
+                
+                <div class="step-item">
+                    <h4>🤖 Step 4: Sub Agent作成</h4>
+                    <div class="explanation-box">
+                        <h5>📋 エージェント作成コマンド</h5>
+                        <p>Claude Codeの<span class="highlight">agents</span>コマンドを使用して、4つの専門エージェントを順次作成します。</p>
+                    </div>
+                    
+                    <div class="code-snippet">
+# エージェント作成の流れ
+/agents
+create-new-agent
+
+# プロジェクト選択
+project
+
+# エージェント名入力
+x-research-agent
+
+# claude.mdの内容を貼り付け
+[claude.mdの全文をコピー&ペースト]
+
+# モデル選択（推奨：Opus）
+opus
+                    </div>
+                    
+                    <div class="success-box">
+                        <strong>✅ 講座での実績：</strong>4つのエージェントを約10分で作成完了！Claude Codeの高速性を実感できました。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ついすぽ活用 -->
+        <div class="section">
+            <div class="section-title">
+                <div class="icon icon-tools">📊</div>
+                「ついすぽ」を使った過去投稿分析
+            </div>
+            
+            <div class="explanation-box">
+                <h3>📋 そらさんが実演した投稿データ収集方法</h3>
+                <p><span class="highlight">「ついすぽ -Tweet Export-」</span>Chrome拡張機能を使って、実際の投稿データを収集し、分析エージェントに読み込ませる手順を解説。</p>
+            </div>
+            
+            <div class="step-timeline">
+                <div class="step-item">
+                    <h4>🌐 ついすぽインストールと使用方法</h4>
+                    <div class="explanation-box">
+                        <h5>📋 データ収集手順</h5>
+                        <ol>
+                            <li>Chrome ウェブストアから「ついすぽ」をインストール</li>
+                            <li>Xで分析したいアカウントを検索（例：from:ユーザー名）</li>
+                            <li>「100いいね以上」など条件を追加して絞り込み</li>
+                            <li>F12で開発者ツールを開き、「ついすぽ」タブを選択</li>
+                            <li>スクロールしてデータ件数を増やす</li>
+                            <li>「Download」でCSVファイルを取得</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="warning-box">
+                        <strong>⚠️ 重要：</strong>ついすぽは検索結果からのみ使用可能。直接プロフィール画面からは使用できません。
+                    </div>
+                </div>
+                
+                <div class="step-item">
+                    <h4>📊 Googleスプレッドシートでの整理</h4>
+                    <div class="explanation-box">
+                        <h5>📋 データ整理プロセス</h5>
+                        <ol>
+                            <li>Googleスプレッドシートを新規作成</li>
+                            <li>「ファイル」→「インポート」でCSVアップロード</li>
+                            <li>不要な列（URL、メタデータ等）を削除</li>
+                            <li>投稿テキストのみを抽出</li>
+                            <li>改行・空白を整理してクリーンなデータに</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="step-item">
+                    <h4>🔍 分析エージェントでの解析実行</h4>
+                    <div class="explanation-box">
+                        <h5>📋 そらさんの投稿から抽出された特徴</h5>
+                        <ul>
+                            <li><strong>フックパターン：</strong>驚きと興奮を伝える書き出し</li>
+                            <li><strong>エモーショナル要素：</strong>親しみやすい口調</li>
+                            <li><strong>プロブレムソルビング：</strong>問題解決型の構成</li>
+                            <li><strong>CTA（Call To Action）：</strong>スレッド形式の活用</li>
+                            <li><strong>ストラクチャー：</strong>空白・改行を効果的に使用</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="term-explanation">
+                        <strong>CTA（Call To Action）</strong> = 読者に具体的な行動を促す要素。「リツイートお願いします」「続きはスレッドで」など。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 実演結果と学び -->
+        <div class="section">
+            <div class="section-title">
+                <div class="icon icon-overview">🎯</div>
+                講座の成果と学び
+            </div>
+            
+            <div class="explanation-box">
+                <h3>📋 2時間の講座で達成したこと</h3>
+                <p>理論学習から実際のシステム構築まで、充実した内容を効率的に学習できました。</p>
+            </div>
+            
+            <div class="tool-grid">
+                <div class="tool-card">
+                    <h4>🤖 エージェント構築</h4>
+                    <p>4つのSub Agentを10分程度で作成完了</p>
+                </div>
+                
+                <div class="tool-card">
+                    <h4>📊 データ分析</h4>
+                    <p>実際の投稿データから成功パターンを抽出</p>
+                </div>
+                
+                <div class="tool-card">
+                    <h4>⚙️ システム生成</h4>
+                    <p>ジャンル別のシステムプロンプトを自動生成</p>
+                </div>
+                
+                <div class="tool-card">
+                    <h4>✍️ 投稿作成</h4>
+                    <p>AIによる高品質な投稿文の自動生成を実現</p>
+                </div>
+            </div>
+            
+            <div class="explanation-box">
+                <h3>💡 参加者の学び・気づき</h3>
+                <ul>
+                    <li><strong>技術的な学び：</strong>Claude Codeの高速性と実用性を体感</li>
+                    <li><strong>戦略的な学び：</strong>X運用の段階別アプローチの重要性</li>
+                    <li><strong>実践的な学び：</strong>AIツールを組み合わせた自動化の可能性</li>
+                    <li><strong>発見：</strong>エンジニアでなくても高度なシステムが構築できる</li>
+                </ul>
+            </div>
+            
+            <div class="explanation-box">
+                <h3>🔮 今後の発展可能性</h3>
+                <ul>
+                    <li><strong>GitHub Actionsとの連携：</strong>定期的な自動投稿の実現</li>
+                    <li><strong>X API連携：</strong>完全自動投稿システムの構築</li>
+                    <li><strong>スマホアプリ化：</strong>移動中でも投稿生成が可能</li>
+                    <li><strong>マルチプラットフォーム：</strong>他のSNSにも展開可能</li>
+                </ul>
+            </div>
+            
+            <div class="success-box">
+                <strong>✅ そらさんからのメッセージ：</strong>
+                <p>「最終的には60%程度の完成度なので、自分の言葉に置き換えることが重要。AIが作った投稿をベースに、自分らしさを加えて完成させることで、より魅力的な投稿になります。」</p>
+            </div>
+            
+            <div class="info-box">
+                <strong>📚 学習リソース：</strong>
+                <ul>
+                    <li>講座で使用したGitHubリポジトリは公開予定</li>
+                    <li>応援チケット購入者には詳細な解説資料を提供</li>
+                    <li>そらさんの学生AIコミュニティでの継続学習も可能</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- まとめ -->
+        <div class="section">
+            <div class="explanation-box">
+                <h3>🎉 講座まとめ</h3>
+                <p>そらさんの実体験に基づく<strong>X運用戦略</strong>と、最新の<strong>Claude Code技術</strong>を組み合わせた、非常に実践的で価値の高い講座でした。理論と実技のバランスが良く、参加者は2時間で即戦力となるスキルを習得できました。</p>
+                
+                <p><strong>特に印象的だったのは：</strong></p>
+                <ul>
+                    <li>Claude Codeの驚異的な作業効率（10分で4エージェント作成）</li>
+                    <li>データ分析に基づく科学的なアプローチ</li>
+                    <li>エンジニア以外でも高度なシステムが構築できる実証</li>
+                    <li>AI時代の新しい働き方・創作活動の可能性</li>
+                </ul>
+                
+                <p><strong>次のステップ：</strong>学んだ技術を自分の分野に応用し、継続的な改善を通じてより効果的なX運用を実現していくことが期待されます。</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

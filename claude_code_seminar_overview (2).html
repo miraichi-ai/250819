@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Codeでエージェント作成＆X運用自動化セミナー - 内容概要</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            mermaid.initialize({
+                startOnLoad: true,
+                theme: 'base',
+                securityLevel: 'loose',
+                fontFamily: 'sans-serif',
+                themeVariables: {
+                    primaryColor: '#4CAF50',
+                    primaryTextColor: '#fff',
+                    primaryBorderColor: '#9575CD',
+                    lineColor: '#009688',
+                    secondaryColor: '#FFC107',
+                    tertiaryColor: '#f0f0f0'
+                },
+                flowchart: {
+                    curve: 'basis'
+                }
+            });
+        });
+    </script>
+    <style>
+        :root {
+            --main-color: #4CAF50;
+            --accent-color-1: #9575CD;
+            --accent-color-2: #FFC107;
+            --accent-color-3: #009688;
+            --accent-color-4: #E91E63;
+            --background-color: #FAFAFA;
+            --text-color: #333;
+            --light-text-color: #2C3E50;
+            --border-color: #E0E0E0;
+        }
+        body {
+            font-family: sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        h1, h2, h3, h4 {
+            color: var(--main-color);
+            margin-bottom: 0.8em;
+        }
+        h1 {
+            font-size: 2.2em;
+            text-align: center;
+            border-bottom: 2px solid var(--accent-color-2);
+            padding-bottom: 10px;
+        }
+        h2 {
+            font-size: 1.8em;
+            color: var(--accent-color-3);
+            border-left: 5px solid var(--accent-color-3);
+            padding-left: 10px;
+            margin-top: 2em;
+        }
+        h3 {
+            font-size: 1.4em;
+            color: var(--accent-color-1);
+            margin-top: 1.5em;
+        }
+        strong {
+            color: var(--accent-color-4);
+        }
+        ul, ol {
+            padding-left: 25px;
+        }
+        li {
+            margin-bottom: 0.5em;
+        }
+        p {
+            margin-bottom: 1em;
+        }
+        .hero-section {
+            background-color: var(--main-color);
+            color: var(--light-text-color);
+            padding: 30px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+        }
+        .hero-section h1 {
+            color: var(--light-text-color);
+            border-bottom: none;
+        }
+        .hero-section p {
+            font-size: 1.1em;
+        }
+        .benefits-section ul li::before {
+            content: '✅ ';
+            color: var(--main-color);
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+        .process-section ol {
+            list-style: none;
+            counter-reset: step-counter;
+            padding-left: 0;
+        }
+        .process-section li {
+            counter-increment: step-counter;
+            margin-bottom: 1em;
+            position: relative;
+            padding-left: 40px;
+        }
+        .process-section li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 30px;
+            height: 30px;
+            background-color: var(--accent-color-2);
+            color: var(--text-color);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+        }
+        .quote {
+            background-color: #f0f0f0;
+            border-left: 5px solid var(--accent-color-1);
+            padding: 15px;
+            margin: 15px 0;
+            font-style: italic;
+        }
+        .faq-section dt {
+            font-weight: bold;
+            color: var(--accent-color-3);
+            margin-top: 1em;
+        }
+        .faq-section dd {
+            margin-left: 1.5em;
+            margin-bottom: 1em;
+        }
+        .mermaid {
+            margin-bottom: 1.5em;
+            text-align: center;
+        }
+        .highlight-box {
+            background: linear-gradient(135deg, var(--accent-color-2), var(--accent-color-1));
+            color: var(--light-text-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <section class="hero-section">
+            <h1>🤖 Claude Codeでエージェント作成＆X運用自動化</h1>
+            <p>プログラミング初心者でも作れる！AI駆動の自動化システム構築術</p>
+            <p>💡 <strong>「面白すぎる！」と参加者が絶賛</strong> - 1から見せてくれる実践型ライブデモ</p>
+            <p>✨ <strong>そらさんの癒しボイス</strong>で学ぶ、分かりやすくて貴重な学習体験</p>
+        </section>
+
+        <section class="benefits-section">
+            <h2>🎯 この内容から得られること</h2>
+            
+            <h3>主な学習内容 / トピック</h3>
+            <ul>
+                <li><strong>Claude Code</strong>の基本操作と活用方法</li>
+                <li>エージェント作成の具体的なプロセス</li>
+                <li><strong>CLAUDE.md</strong>ファイルの設定と活用</li>
+                <li>GitHubとの連携方法</li>
+                <li><strong>X（Twitter）運用自動化</strong>の仕組み</li>
+                <li>「すいすぽ」などの便利ツールの紹介</li>
+                <li>カーソルとClaude Codeの違い</li>
+            </ul>
+
+            <h3>💡 具体的にできるようになること / 成果</h3>
+            <ul>
+                <li>Claude Codeを使った<strong>自動化エージェントの作成</strong></li>
+                <li>X投稿の<strong>自動生成・投稿システム</strong>の構築</li>
+                <li>GitHubでのプロジェクト管理とclone作業</li>
+                <li>効率的なX運用の<strong>3つのフェーズ戦略</strong>の実践</li>
+                <li>分析データの自動保存と活用</li>
+                <li>プロンプト作成と壁打ちでのフロー構成</li>
+            </ul>
+
+            <div class="highlight-box">
+                <h3>✨ 期待される変化 / ポジティブな影響</h3>
+                <p><strong>「全然Claude Codeを使いこなせていない」</strong>状態から、<strong>「面白すぎる！」「すごく分かりやすい！」</strong>と感じられる実践的な学習体験へ。参加者が実際に<strong>「post作成まで完了した」「noteやyoutubeなどいろいろ活用できそう」</strong>と語るように、手作業でのSNS運用から脱却し、<strong>AI駆動の効率的な自動化</strong>により時間を大幅に節約できるようになります。</p>
+                <p>🎯 <strong>そらさんの癒しボイスと丁寧な解説</strong>で、プログラミング初心者でも<strong>「とても勉強になった」「貴重な時間だった」</strong>と実感できる充実した学習体験が得られます。</p>
+            </div>
+        </section>
+
+        <section class="proof-section">
+            <h2>💬 参加者の具体的な感想 / 学習効果</h2>
+            
+            <div class="quote">
+                <p>"<strong>Claude Codeを使って Agentを作っていくのが面白かったです。</strong> ずっと自動化を行なっていたからこそ出てくる発想なのかなと思いました。"</p>
+                <p><em>- 30代会社員参加者</em></p>
+            </div>
+
+            <div class="quote">
+                <p>"<strong>とても詳しく教えてくれてありがとうございました。すごく分かりやすかったです。</strong>実際に自分でも試してみます！"</p>
+                <p><em>- 20代会社員参加者</em></p>
+            </div>
+
+            <div class="quote">
+                <p>"そらさんの声が癒し過ぎて、聞きながら時々おちてしまいましたが、復活するたびに<strong>面白すぎると5回くらい繰り返してました。</strong>"</p>
+                <p><em>- 40代会社員参加者</em></p>
+            </div>
+
+            <div class="quote">
+                <p>"<strong>実際にその過程が見れるのは本当に有意義でした</strong> ありがとうございました。<strong>画面共有いただけて操作の学びもとても深くて貴重な時間でした！</strong>"</p>
+                <p><em>- 30代求職中参加者</em></p>
+            </div>
+
+            <div class="quote">
+                <p>"agentの作成時にCLAUDE.mdの全文を指定してなくてanalysisに保存されていませんでした。agentを作り直したらanalysisに保存されて、<strong>最後のpost作成まで完了しました！</strong> Xだけじゃなくnoteやyoutubeなどいろいろ活用できそうですね。"</p>
+                <p><em>- 50代会社員参加者の成功体験</em></p>
+            </div>
+
+            <div class="quote">
+                <p>"<strong>そらさんのゆったりした、感じがとても好印象でした✨</strong> 理解できたところと、何をしているのか、何を言っているの私にはまだ、難しい部分もありましたが、<strong>とても勉強になりました😃</strong>"</p>
+                <p><em>- 40代会社員参加者</em></p>
+            </div>
+
+            <pre class="mermaid">
+                graph TD
+                    A[初心者レベル] --> B[基本操作習得]
+                    B --> C[エージェント作成]
+                    C --> D[自動化システム完成]
+                    D --> E[X運用効率化]
+                    
+                    style A fill:#ffcccc
+                    style E fill:#ccffcc
+            </pre>
+        </section>
+
+        <section class="process-section">
+            <h2>➡️ 詳細なプロセス / 手順</h2>
+            
+            <h3>具体的なステップ</h3>
+            <ol>
+                <li><strong>環境準備:</strong> Claude Codeの基本操作を理解し、GitHubアカウントの設定を行う</li>
+                <li><strong>エージェント設計:</strong> CLAUDE.mdファイルを作成し、エージェントの仕様を定義する</li>
+                <li><strong>プロトタイプ作成:</strong> 最初のエージェントを作成し、基本動作を確認する</li>
+                <li><strong>X連携設定:</strong> X APIと連携し、投稿自動化の仕組みを構築する</li>
+                <li><strong>分析・改善:</strong> 投稿データを分析し、エージェントを改良していく</li>
+                <li><strong>運用最適化:</strong> 3つのフェーズに基づいたX運用戦略を実装する</li>
+            </ol>
+
+            <pre class="mermaid">
+                graph TD
+                    Start[開始] --> Setup[Claude Code環境構築]
+                    Setup --> Agent[エージェント作成]
+                    Agent --> CLAUDE[CLAUDE.md設定]
+                    CLAUDE --> Connect[X API連携]
+                    Connect --> Auto[自動投稿システム]
+                    Auto --> Analysis[データ分析]
+                    Analysis --> Optimize[運用最適化]
+                    Optimize --> Success[効率的なX運用達成]
+                    
+                    style Start fill:#e1f5fe
+                    style Success fill:#c8e6c9
+            </pre>
+
+            <h3>X運用の3つのフェーズ戦略</h3>
+            <pre class="mermaid">
+                graph LR
+                    Phase1[フェーズ1<br/>基礎構築<br/>フォロワー200人未満] --> Phase2[フェーズ2<br/>成長期<br/>自動化導入]
+                    Phase2 --> Phase3[フェーズ3<br/>拡大期<br/>高度な自動化]
+                    
+                    style Phase1 fill:#fff3e0
+                    style Phase2 fill:#f3e5f5
+                    style Phase3 fill:#e8f5e8
+            </pre>
+        </section>
+
+        <section class="faq-section">
+            <h2>❓ 想定される疑問点 (Q&A)</h2>
+            <dl>
+                <dt>Q1: プログラミング初心者でも理解できますか？</dt>
+                <dd>A1: はい。参加者の感想では<strong>「1から見せてくれた」「とても詳しく教えてくれた」「すごく分かりやすかった」</strong>とあり、初心者レベルから丁寧に解説されています。<strong>「そらさんのゆったりした感じがとても好印象」</strong>という声もあり、安心して学習できる環境です。</dd>
+                
+                <dt>Q2: セミナーの雰囲気はどうですか？</dt>
+                <dd>A2: <strong>「そらさんの声が癒し過ぎて」「面白すぎると5回くらい繰り返してました」</strong>という感想があり、リラックスして楽しく学べる雰囲気です。<strong>「画面共有いただけて操作の学びもとても深くて貴重な時間でした！」</strong>と、参加者が心から満足している様子が伺えます。</dd>
+                
+                <dt>Q3: 実際にシステムは完成しますか？</dt>
+                <dd>A3: 参加者の実体験として<strong>「最後のpost作成まで完了しました！」</strong>という報告があり、セミナー内で実際に動作するシステムが完成することが確認されています。さらに<strong>「Xだけじゃなくnoteやyoutubeなどいろいろ活用できそう」</strong>と応用可能性も実感されています。</dd>
+                
+                <dt>Q4: 途中でついていけなくなった場合はどうすればいいですか？</dt>
+                <dd>A4: <strong>「アーカイブを購入して後で復習したい」</strong>という参加者が多く、復習システムが充実しています。また、<strong>「repositoryをcloneさせてもらって大変助かります」</strong>とあるように、GitHubリポジトリからソースコードも入手でき、自分のペースで学習を進められます。</dd>
+                
+                <dt>Q5: どのような学習効果が期待できますか？</dt>
+                <dd>A5: <strong>「Claude Codeを使って Agentを作っていくのが面白かった」「とても勉強になった」</strong>という声に代表されるように、楽しみながら実践的なスキルが身につきます。<strong>「実際にその過程が見れるのは本当に有意義でした」</strong>と、ライブデモの価値を実感する参加者が多数います。</dd>
+            </dl>
+        </section>
+    </div>
+</body>
+</html>
